@@ -1,0 +1,28 @@
+name: Exercise Workflow
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on pull request events
+  pull_request:
+    types: [opened]
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+
+  HandleResults:
+    runs-on: ubuntu-latest
+    name: Forwarding Results.
+    steps: 
+      - uses: actions/checkout@v3
+      - uses: licenseware/send-email-notification@v1
+        with:
+          api-key: ${{ secrets.SENDGRID_API_KEY }}
+          subject: (DevOpsExercise)ValidatorExercise_PR_${{ github.event.pull_request.user.login }}
+          from-email: devops-exercise-noreply@skyline.be
+          to-email: ${{ secrets.MAILADDRESS }}
+          markdown-body: |
+            This is an automatic e-mail indicating devops exercise results for ${{ github.repository }}. Results can be found on GitHub. Sent by user ${{ github.event.pull_request.user.login }}.
+
+      - name: Close Pull
+        run: gh pr close ${{ github.event.pull_request.number }} --comment "Auto-closing pull request. Results were forwarded to Skyline." --delete-branch
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
