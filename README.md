@@ -1,76 +1,285 @@
-# Skyline.DataMiner.CICD.Validators
+# Contributing to Validator code
 
 ## About
 
-### About Skyline.DataMiner.CICD.Validators packages
+> **Warning**
+> This is a test repository to play around with and perform the ValidatorsExercise1 with. For the real Validator and real contributions please use: https://github.com/SkylineCommunications/Skyline.DataMiner.CICD.Validators
 
-Skyline.DataMiner.CICD.Validator packages are NuGet packages available in the public [NuGet store](https://www.nuget.org/) that contain assemblies that enhance the CICD experience.
+In this tutorial, you will explore collaborative software development and DevOps with a focus on adding new checks to the Validator as used within DIS (DataMiner Integration Studio) and CI/CD. You will learn how to navigate the Validator source code, add a new check and create a Pull Request. With a hands-on exercise using a fake Validator source code, you will get to utilize GitHub to create a fork, a clone, and a pull request with your changes so that you are ready to perform the real thing!
 
-The following packages are available:
+In the below exercise, the only difference between the exercise and the real thing is in Step 2, your fork:
 
-- Skyline.DataMiner.CICD.Validators.Common
-- Skyline.DataMiner.CICD.Validators.Protocol
-- Skyline.DataMiner.CICD.Validators.Protocol.Features
+- For the exercise you will fork [https://github.com/SkylineCommunications/Skyline.DataMiner.CICD.ValidatorsExercise](https://github.com/SkylineCommunications/Skyline.DataMiner.CICD.ValidatorsExercise)
 
-### About DataMiner
+- For real validator contributions, you will fork [https://github.com/SkylineCommunications/Skyline.DataMiner.CICD.Validators](https://github.com/SkylineCommunications/Skyline.DataMiner.CICD.Validators)
 
-DataMiner is a transformational platform that provides vendor-independent control and monitoring of devices and services. Out of the box and by design, it addresses key challenges such as security, complexity, multi-cloud, and much more. It has a pronounced open architecture and powerful capabilities enabling users to evolve easily and continuously.
+The missing test:
+When adding the option "datetime" to the Measurement.Type tag, check if the "Display" tag has the tag <Decimals>8</Decimals>
 
-The foundation of DataMiner is its powerful and versatile data acquisition and control layer. With DataMiner, there are no restrictions to what data users can access. Data sources may reside on premises, in the cloud, or in a hybrid setup.
+Expected duration: 15 minutes.
 
-A unique catalog of 7000+ connectors already exist. In addition, you can leverage DataMiner Development Packages to build you own connectors (also known as "protocols" or "drivers").
+> [!TIP]
+> See also: [Kata #X: Validator Contribution](https://community.dataminer.services/courses/kata-X) on DataMiner Dojo ![Video](~/user-guide/images/video_Duo.png)
 
-> **Note**
-> See also: [About DataMiner](https://aka.dataminer.services/about-dataminer)
+> [!NOTE]
+> This tutorial requires .NET 8.0 SDK. You can install the SDK [here](https://dotnet.microsoft.com/en-us/download/dotnet/8.0).
+>
+> Visual Studio 2022 v17.8+ is required to target .NET 8.
 
-### About Skyline Communications
+> [!WARNING]
+> After installing .NET 8.0 SDK and updating Visual Studio you may require a PC reboot.
 
-At Skyline Communications, we deal in world-class solutions that are deployed by leading companies around the globe. Check out [our proven track record](https://aka.dataminer.services/about-skyline) and see how we make our customers' lives easier by empowering them to take their operations to the next level.
+## Prerequisites
 
-### How to contribute
+- [SDK 8.0](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
 
-#### Add error message(s)
+- [Visual Studio](https://visualstudio.microsoft.com/downloads/)
 
-Set the `Validator Management Tool` project as startup project. Click on the 'Start' button (Debug > Start Debugging).
+- [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
 
-In the tool, you can add new error messages via the *Add Check...* button. This will open a new screen which has several fields that need to be filled in. If you are unsure about some of the fields, don't hesitate to contact [Data-Acquisition](mailto:support.data-acquisition@skyline.be) for more information.
+- [GitHub Account](https://docs.github.com/en/get-started/signing-up-for-github/signing-up-for-a-new-github-account)
 
-- *Category*: Top level tags fall under 'Protocol' and then the lower tags like within the Param tag fall under 'Param'. Similar for the others.
-- *Namespace*: This is the 'path' for the tag/attribute. In case there is no check yet for that tag, then you can create a new namespace via the *Add new Namespace...* button.
-- *Check Name*: This is the name of the class that will be generated. We use 'CheckABCTag', 'CheckABCAttribute' for checks on specific tags or attributes. In case of a check that involves bigger scenarios, then it just needs to start with 'Check'. QActions have also an exception: When it is a C# analysis check, it starts with 'CSharp'.
-- *Error Message Name*: This is the name of the error message. This will become a method when generating the code.
-- *Description*: Provide a meaningful description with the necessary placeholders. Similar like `String.Format` you can use `{0}` as placeholders. In case of a more generic error message, you can use the templates. This can be toggled via the checkbox on the right.
-- *Description Parameters*: These are the placeholders from the Description.
-- *Source*: Either Validator (Validate) or MajorChangeChecker (Compare)
-- *Certainty*: How sure are we that the error message is correct?
-- *Fix Impact*: Would there be a breaking change when fixing the error?
-- *Has Code Fix*: Is there an automatic fix possible?
-- *How To Fix*: Optional field that can describe the steps needed on how to fix the issue.
-- *Example Code*: Optional field that can describe how the correct syntax would be.
-- *Details*: Optional field that can give extra information regarding the error.
+## Step 1: Fork the repository
 
-After clicking *Add* it will add the error message to the list. If wanted, you can add other error messages or modify existing ones.
+1. Go to [https://github.com/SkylineCommunications/Skyline.DataMiner.CICD.ValidatorsExercise](https://github.com/SkylineCommunications/Skyline.DataMiner.CICD.ValidatorsExercise)
 
-When finished, click *Save* so that the changes are saved to the XML that holds all the error messages. Then click *Generate Code* on the left to start the generation of the C# files. This will generate the Error classes, the check file itself and the unit test files.
+2. In the top right corner, click *Fork*.
 
-#### Prepare unit tests
+3. Follow the wizard to create a fork of the repository under your own account.
 
-In the `ProtocolTests` project are all the unit tests for the Validator & MajorChangeChecker. You can find your check by following the namespace (Protocol > Params > ...).
+## Step 2: Clone your fork
 
-Remove all the \[Ignore\] tags and add the necessary error messages. You can have a look at other unit tests how it is done.
+On the page of your GitHub fork (e.g. `https://github.com/YourGitHubHandle/Skyline.DataMiner.CICD.ValidatorsExercise`), click the green *Code* button and select *Open in Visual Studio*.
 
-In the *Samples* folder you can add or modify the XML files to hold the scenario that should throw the error message.
+> [!NOTE]
+> In some cases, the *Open in Visual Studio* option may not be available. In that case, you will need to use GitHub Desktop instead to make the clone. Make sure you have [GitHub Desktop](https://desktop.github.com/) installed, and when you click the *Code* button on your fork page, select the option *Open with GitHub Desktop* instead.
 
-#### Start developing
+## Step 3: Run the 'Validator Management Tool'
 
-In the `Protocol` project under the *Tests* folder you can find the same structure as ProtocolTests.
+1. In the Solution Explorer, right click the *Validator Management Tool* and select *Set as Startup Project*
 
-Uncomment the attribute and comment out the interfaces and methods that aren't needed:
+   This turns the *Validator Management Tool* bold and you'll see *Validator Management Tool* at the top next to the play button.
 
-- IValidate - Validate(): Validator check
-- ICodeFix - Fix(): If 'Has Code Fix' is true
-- ICompare - Compare(): Major Change check
+2. Click the Play button You should now see the following screen
 
-#### Create pull request
+![ValidatorManagementWindow](https://github.com/SkylineCommunications/Skyline.DataMiner.CICD.ValidatorsExercise/assets/71829634/f9c6854e-205c-479c-a3fd-2e8839f46446)
 
-When finished, create a pull request so that we can review and merge your code.
+## Step 4: Add a new check
+
+1. In the *Validator Management Tool*, click the **Add Check...** button. This opens a new window.
+
+2. In the new window, follow these steps:
+
+![ValidatorManagementWindowCreateNewTest](https://github.com/SkylineCommunications/Skyline.DataMiner.CICD.ValidatorsExercise/assets/71829634/1c7064a4-383c-416f-b847-c192e0f734e0)
+
+   - **Category:** Choose the top-level category for the check. 
+
+     Use `Param` for this exercise.
+
+   - **Namespace:** Define the 'path' for the tag/attribute. If it's a new namespace, use the **Add new Namespace...** button.
+
+     In this exercise we are checking the correctness of the Display tag. So we should add a new namespace for Protocol.Params.Param.Display.Decimals
+
+     Select the newly created `Protocol.Params.Param.Display.Decimals` namespace.
+
+   - **Check Name:** Specify the name of the class to be generated.
+
+     In this exercise we want to check the validity of the content of this tag. We should add a new Check called CheckDecimalTag.
+
+     Select the newly created `CheckDecimalTag` for this exercise.
+
+   - **Error Message Name:** Name the error message. It will become a method during code generation.
+
+     Use `InvalidTagForDateTime` for this exercise.
+
+   - **Description:** Provide a description with placeholders.
+
+     Select from the templates in the dropdown `Missing tag '{0}' with expected value '{1}' for {2} '{3}'.`
+
+   - **Description Parameters:** List the placeholders from the description.
+
+     Use the default provided placeholders for this exercise.
+
+   - **Source:** Indicate whether it's from Validator (Validate) or MajorChangeChecker (Compare).
+
+     Use `Validator` for this exercise.
+
+   - **Severity:** Specify the severity level. To choose the right severity, you can follow the following guide:
+       
+       - Critical: This type of error will have a critical impact on the system or will fully prevent the driver from working. It may also draw your attention to something that needs to be fixed for administrative reasons.
+
+       - Major: This type of error will prevent part of the driver from workingas expected. Example: A specific driver feature will not work.
+
+       - Minor: This type of error will not prevent the driver from working, but will have some impact. It may draw your attention to something that was not implemented according to the best practice guidelines. Example: Bad performance, Not user-friendly, etc.
+
+       - Warning: This type of error reveals something that will not have any impact.Example: Unused XML elements or attributes.
+
+        Use `Major` for this exercise.
+
+   - **Certainty:** Specify the certainty level.
+      
+      - Certain: An error has been detected and needs to be fixed.
+
+      - Uncertain: A possible error has been detected and needs to be fixed once verified.
+
+     Use `Certain` for this exercise.
+
+   - **Fix Impact:** Determine if there's a breaking change.
+
+     Use `NonBreaking` for this exercise.
+
+   - **Has Code Fix:** Indicate if an automatic fix is possible.
+
+     Though an automatic fix is possible. We'll tackle that in a different tutorial. `Uncheck` for this exercise.
+
+   - **How To Fix:** Optionally describe the steps to fix the issue.
+
+     We can write `Add the Protocol.Params.Param.Display.Decimals tag with value 8`. for this exercise.
+
+   - **Example Code:** Optionally provide correct syntax.
+
+     For this exercise we can write:
+
+```xml
+   <Display>
+    <RTDisplay>true</RTDisplay>
+    <Decimals>8</Decimals>
+   </Display>
+   <Measurement>
+    <Type options="datetime">number</Type>
+   </Measurement>
+```
+   - **Details:** Extra information about the error. This is important as it will be visible in the UI of DIS.
+
+For this exercise we can write:
+```md
+By default, only 6 decimals are saved in memory. Parameters holding datetime needs at least 8 decimals to be accurate.
+Otherwise you can see rounding issues when retrieving the parmater from an external source like an Automation Script.
+```
+
+3. After clicking **Add**, the error message will be listed. If desired, add more messages or modify existing ones.
+
+4. Click **Save** to save changes to the XML holding all error messages. Then, click **Generate Code** to generate C# files.
+
+5. You can now close the window.
+
+## Step 5: Enable your tests
+
+1. If you look at the Git Changes window, you can easily see what was added by the code generation.
+
+![ShowGeneratedCode](https://github.com/SkylineCommunications/Skyline.DataMiner.CICD.ValidatorsExercise/assets/71829634/3f9b3c5d-eea4-4fa3-bf4d-83fb086054df)
+
+2. We can start by writing our tests first. This ensures we can develop until failing tests become OK.
+
+    1. Open the Valid.xml file and create XML representing the expected correct XML:
+
+```xml
+<Protocol xmlns="http://www.skyline.be/validatorProtocolUnitTest">
+	<Params>
+		<Param id="10">
+			<Display>
+				<RTDisplay>true</RTDisplay>
+				<Decimals>8</Decimals>
+			</Display>
+			<Measurement>
+				<Type options="datetime">number</Type>
+			</Measurement>
+		</Param>
+	</Params>
+</Protocol>
+```
+
+3. Open the InvalidTagForDateTime.xml and create an example of an incorrect situation: 
+
+```xml
+<Protocol xmlns="http://www.skyline.be/validatorProtocolUnitTest">
+	<Params>
+		<Param id="10">
+			<Display>
+				<RTDisplay>true</RTDisplay>
+			</Display>
+			<Measurement>
+				<Type options="datetime">number</Type>
+			</Measurement>
+		</Param>
+	</Params>
+</Protocol>
+```
+    
+4. Open CheckDecimalTag.cs from the *ProtocolTests\Protocol\Params\Param\Display\Decimals\CheckDecimalTag* and remove the [Ignore] attributes on everything.
+    ![ValidatorShowGeneratedCodeChangeTests](https://github.com/SkylineCommunications/Skyline.DataMiner.CICD.ValidatorsExercise/assets/71829634/1cacc3ac-8a13-4b37-b710-7cae5882cf07)
+
+5. Uncomment the Line: `Error.InvalidTagForDateTime(...` and change this to what we expect to get:
+        You can F12 on the static method to see the expected description format again. `Missing tag '{0}' with expected value '{1}' for {2} '{3}'.`
+```cs
+   Error.InvalidTagForDateTime(null, null, null, "Protocol.Params.Param.Display.", "8", "datetime parameter", "10"),
+```
+6. Try executing all these tests by right clicking on the first line of file and selecting Run Tests.
+        You should see 3 failing tests at this point.
+
+## Step 5: Write your logic
+
+1. If you look at the Git Changes window, you can easily see what was added by the code generation.
+
+2. Open CheckDecimalTag.cs from inside the *Tests\Protocol\Params\Display\Decimals*
+![ValidatorShowGeneratedCodeChangeLogic](https://github.com/SkylineCommunications/Skyline.DataMiner.CICD.ValidatorsExercise/assets/71829634/e0b6a630-e769-471b-a312-6da72e57a6f8)
+
+3. Make sure to check [the documentation](https://docs.dataminer.services/develop/schemadoc/Protocol/Protocol.Params.Param.Measurement.Type-options.html#options-for-measurement-type-number) of the tag, to see what possible syntaxes exist. 
+
+4. Uncomment this attribute //[Test(CheckId.CheckDecimalTag, Category.Param)]
+    
+5. Remove ICodeFix and ICompare. We will only use IValidate.
+    
+6. Most of your validation will need to loop over several items to validate. In our case we need every parameter: *context.EachParamWithValidId*.
+      You can the following code:
+
+```cs
+        public List<IValidationResult> Validate(ValidatorContext context)
+        {
+            List<IValidationResult> results = new List<IValidationResult>();
+
+            foreach (var p in context.EachParamWithValidId())
+            {
+                // Early Return pattern. Only check number types.
+                if (p?.Measurement?.Type?.Value != Models.Protocol.Enums.EnumParamMeasurementType.Number) continue;
+
+                // Only check if there are options.
+                var allOptions = p?.Measurement?.Type?.Options?.Value?.Split(';');
+                if (allOptions == null) continue;
+
+                // Is there an option involving date or datetime?
+                List<string> possibleLowerCaseDateSyntax = new List<string>() { "date", "datetime", "datetime:minute" };
+                bool foundDateTime = Array.Exists(allOptions, option => possibleLowerCaseDateSyntax.Contains(option.ToLower()));
+
+                // Verify valid decimals.
+                var decimalsTag = p.Display?.Decimals;
+                if (foundDateTime && decimalsTag?.Value != 8)
+                {
+                    results.Add(Error.InvalidTagForDateTime(this, p, decimalsTag, "Protocol.Params.Param.Display.", "8", "datetime parameter", p.Id.RawValue));
+                }
+            }
+
+            return results;
+        }
+```
+
+## Step 6: Verify your code
+
+ 1. Run your new tests. Check if they are green.
+
+ 2. Run the entire test battery, to check for any regression. (this can take several minutes)
+
+## Step 6: Create a pull request
+
+In order to share your changes with the original owner, you now need to create a pull request.
+
+- If you are using Visual Studio 2022, you can do this from within Visual Studio. It will detect that you did a commit and push to a forked repository, and it will suggest making a pull request.
+
+- You can also do this from GitHub by navigating to the *Pull requests* tab of your fork page and then clicking the *New pull request* button.
+
+This will inform the owners of your suggested additions and changes. They can then be reviewed, merged and released.
+
+For this exercise, this will trigger an automatic pipeline that closes your pull request and forwards the results to Skyline.
+
+> [!NOTE]
+> Skyline will review your submission. Upon successful validation, you will be awarded the appropriate DevOps Points as a token of your accomplishment.
