@@ -3,7 +3,7 @@ name: Exercise Workflow
 # Controls when the workflow will run
 on:
   # Triggers the workflow on pull request events
-  pull_request_target:
+  pull_request:
     types: [opened]
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -22,6 +22,6 @@ jobs:
             This is an automatic e-mail indicating devops exercise results for ${{ github.repository }}. Results can be found on GitHub. Sent by user ${{ github.event.pull_request.user.login }}.
 
       - name: Close Pull
-        run: gh pr close ${{ github.event.number }} --comment "Auto-closing pull request. Results were forwarded to Skyline." --delete-branch
+        run: gh pr close ${{ github.event.pull_request.number }} --comment "Auto-closing pull request. Results were forwarded to Skyline." --delete-branch
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
