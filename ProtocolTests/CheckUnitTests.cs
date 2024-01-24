@@ -460,7 +460,7 @@
             valProject = solution.Projects.Single(x => x.Name == "Protocol");
 
 #if NETFRAMEWORK
-            testProject = solution.Projects.Single(x => x.Name == "ProtocolTests");
+            testProject = solution.Projects.Single(x => x.Name == "ProtocolTests" || x.Name == "ProtocolTests(net472)");
 #elif NET
             testProject = solution.Projects.Single(x => x.Name == "ProtocolTests(net6.0)");
 #endif
@@ -1607,7 +1607,7 @@
             DirectoryInfo a = Directory.GetParent(Assembly.GetExecutingAssembly().Location);
             while (solutionPath == String.Empty)
             {
-                var temp = a.GetDirectories("Skyline.DataMiner.CICD.Validators", SearchOption.TopDirectoryOnly);
+                var temp = a.GetDirectories("Skyline.DataMiner.CICD.ValidatorsExercise1", SearchOption.TopDirectoryOnly);
                 if (temp.Length == 1)
                 {
                     var files = temp[0].GetFiles("*.sln");
