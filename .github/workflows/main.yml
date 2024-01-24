@@ -12,6 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Forwarding Results.
     steps: 
+      - uses: actions/checkout@v3
       - uses: licenseware/send-email-notification@v1
         with:
           api-key: ${{ secrets.SENDGRID_API_KEY }}
