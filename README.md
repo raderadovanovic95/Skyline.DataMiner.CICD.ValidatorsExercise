@@ -22,16 +22,14 @@ Expected duration: 15 minutes.
 > See also: [Kata #X: Validator Contribution](https://community.dataminer.services/courses/kata-X) on DataMiner Dojo ![Video](~/user-guide/images/video_Duo.png)
 
 > [!NOTE]
-> This tutorial requires .NET 8.0 SDK. You can install the SDK [here](https://dotnet.microsoft.com/en-us/download/dotnet/8.0).
->
-> Visual Studio 2022 v17.8+ is required to target .NET 8.
+> This tutorial requires .NET 6.0 SDK. You can install the SDK [here](https://dotnet.microsoft.com/en-us/download/dotnet/6.0).
 
 > [!WARNING]
-> After installing .NET 8.0 SDK and updating Visual Studio you may require a PC reboot.
+> After installing .NET 6.0 SDK and updating Visual Studio you may require a PC reboot.
 
 ## Prerequisites
 
-- [SDK 8.0](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
+- [SDK 6.0](https://dotnet.microsoft.com/en-us/download/dotnet/6.0)
 
 - [Visual Studio](https://visualstudio.microsoft.com/downloads/)
 
