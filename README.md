@@ -22,14 +22,16 @@ Expected duration: 15 minutes.
 > See also: [Kata #X: Validator Contribution](https://community.dataminer.services/courses/kata-X) on DataMiner Dojo ![Video](~/user-guide/images/video_Duo.png)
 
 > [!NOTE]
-> This tutorial requires .NET 6.0 SDK. You can install the SDK [here](https://dotnet.microsoft.com/en-us/download/dotnet/6.0).
+> This tutorial requires .NET 8.0 SDK. You can install the SDK [here](https://dotnet.microsoft.com/en-us/download/dotnet/8.0).
+>
+> Visual Studio 2022 v17.8+ is required to target .NET 8.
 
 > [!WARNING]
-> After installing .NET 6.0 SDK and updating Visual Studio you may require a PC reboot.
+> After installing .NET 8.0 SDK and updating Visual Studio you may require a PC reboot.
 
 ## Prerequisites
 
-- [SDK 6.0](https://dotnet.microsoft.com/en-us/download/dotnet/6.0)
+- [SDK 8.0](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
 
 - [Visual Studio](https://visualstudio.microsoft.com/downloads/)
 
@@ -47,7 +49,7 @@ Expected duration: 15 minutes.
 
 ## Step 2: Clone your fork
 
-On the page of your GitHub fork (e.g. `https://github.com/YourGitHubHandle/Skyline.DataMiner.CICD.ValidatorsExercise`), click the green *Code* button and select *Open in Visual Studio*.
+On the page of your GitHub fork (e.g. `https://github.com/YourGitHubHandle/Skyline.DataMiner.CICD.ValidatorsExercise`), click the *Code* button and select *Open in Visual Studio*.
 
 > [!NOTE]
 > In some cases, the *Open in Visual Studio* option may not be available. In that case, you will need to use GitHub Desktop instead to make the clone. Make sure you have [GitHub Desktop](https://desktop.github.com/) installed, and when you click the *Code* button on your fork page, select the option *Open with GitHub Desktop* instead.
@@ -68,7 +70,7 @@ On the page of your GitHub fork (e.g. `https://github.com/YourGitHubHandle/Skyli
 
 2. In the new window, follow these steps:
 
-![ValidatorManagementWindowCreateNewTest](https://github.com/SkylineCommunications/Skyline.DataMiner.CICD.ValidatorsExercise/assets/71829634/1c7064a4-383c-416f-b847-c192e0f734e0)
+![ValidatorManagementWindowCreateNewTest](https://github.com/SkylineCommunications/Skyline.DataMiner.CICD.ValidatorsExercise/assets/71829634/dcaa8bbd-6d51-43d7-8dbe-e91b3de05c73)
 
    - **Category:** Choose the top-level category for the check. 
 
@@ -82,9 +84,9 @@ On the page of your GitHub fork (e.g. `https://github.com/YourGitHubHandle/Skyli
 
    - **Check Name:** Specify the name of the class to be generated.
 
-     In this exercise we want to check the validity of the content of this tag. We should add a new Check called CheckDecimalTag.
+     In this exercise we want to check the validity of the content of this tag. We should add a new Check called CheckDecimalsTag.
 
-     Select the newly created `CheckDecimalTag` for this exercise.
+     Select the newly created `CheckDecimalsTag` for this exercise.
 
    - **Error Message Name:** Name the error message. It will become a method during code generation.
 
@@ -96,7 +98,12 @@ On the page of your GitHub fork (e.g. `https://github.com/YourGitHubHandle/Skyli
 
    - **Description Parameters:** List the placeholders from the description.
 
-     Use the default provided placeholders for this exercise.
+     For this exercise, we can add some fixed data already:
+     tagName: Display/Decimals
+     expectedValue: 8
+     itemKind: Param
+
+     We can also rename itemId into paramId to make our code more readable later on.
 
    - **Source:** Indicate whether it's from Validator (Validate) or MajorChangeChecker (Compare).
 
@@ -132,8 +139,10 @@ On the page of your GitHub fork (e.g. `https://github.com/YourGitHubHandle/Skyli
 
    - **How To Fix:** Optionally describe the steps to fix the issue.
 
-     We can write `Add the Protocol.Params.Param.Display.Decimals tag with value 8`. for this exercise.
-
+     We can write
+     ```md
+     Add the Protocol.Params.Param.Display.Decimals tag with value 8`. for this exercise.
+     ```
    - **Example Code:** Optionally provide correct syntax.
 
      For this exercise we can write:
@@ -152,10 +161,12 @@ On the page of your GitHub fork (e.g. `https://github.com/YourGitHubHandle/Skyli
 For this exercise we can write:
 ```md
 By default, only 6 decimals are saved in memory. Parameters holding datetime needs at least 8 decimals to be accurate.
-Otherwise you can see rounding issues when retrieving the parmater from an external source like an Automation Script.
+Otherwise you can see rounding issues when retrieving the parameter from an external source like an Automation Script.
 ```
 
 3. After clicking **Add**, the error message will be listed. If desired, add more messages or modify existing ones.
+
+    **Important** Wait for the indication: The XML is outdated!
 
 4. Click **Save** to save changes to the XML holding all error messages. Then, click **Generate Code** to generate C# files.
 
@@ -205,17 +216,18 @@ Otherwise you can see rounding issues when retrieving the parmater from an exter
 ```
     
 4. Open CheckDecimalTag.cs from the *ProtocolTests\Protocol\Params\Param\Display\Decimals\CheckDecimalTag* and remove the [Ignore] attributes on everything.
+   
     ![ValidatorShowGeneratedCodeChangeTests](https://github.com/SkylineCommunications/Skyline.DataMiner.CICD.ValidatorsExercise/assets/71829634/1cacc3ac-8a13-4b37-b710-7cae5882cf07)
 
 5. Uncomment the Line: `Error.InvalidTagForDateTime(...` and change this to what we expect to get:
         You can F12 on the static method to see the expected description format again. `Missing tag '{0}' with expected value '{1}' for {2} '{3}'.`
 ```cs
-   Error.InvalidTagForDateTime(null, null, null, "Protocol.Params.Param.Display.", "8", "datetime parameter", "10"),
+  Error.InvalidTagForDateTime(null, null, null, "paramId"),
 ```
 6. Try executing all these tests by right clicking on the first line of file and selecting Run Tests.
         You should see 3 failing tests at this point.
 
-## Step 5: Write your logic
+## Step 6: Write your logic
 
 1. If you look at the Git Changes window, you can easily see what was added by the code generation.
 
@@ -226,23 +238,23 @@ Otherwise you can see rounding issues when retrieving the parmater from an exter
 
 4. Uncomment this attribute //[Test(CheckId.CheckDecimalTag, Category.Param)]
     
-5. Remove ICodeFix and ICompare. We will only use IValidate.
+5. Comment out ICodeFix and ICompare. We will only use IValidate.
     
 6. Most of your validation will need to loop over several items to validate. In our case we need every parameter: *context.EachParamWithValidId*.
-      You can the following code:
+      You can use the following code:
 
 ```cs
         public List<IValidationResult> Validate(ValidatorContext context)
         {
             List<IValidationResult> results = new List<IValidationResult>();
 
-            foreach (var p in context.EachParamWithValidId())
+            foreach (var param in context.EachParamWithValidId())
             {
                 // Early Return pattern. Only check number types.
-                if (p?.Measurement?.Type?.Value != Models.Protocol.Enums.EnumParamMeasurementType.Number) continue;
+                if (!param.IsNumber()) continue;
 
                 // Only check if there are options.
-                var allOptions = p?.Measurement?.Type?.Options?.Value?.Split(';');
+                var allOptions = param.Measurement?.Type?.Options?.Value?.Split(';');
                 if (allOptions == null) continue;
 
                 // Is there an option involving date or datetime?
@@ -250,10 +262,10 @@ Otherwise you can see rounding issues when retrieving the parmater from an exter
                 bool foundDateTime = Array.Exists(allOptions, option => possibleLowerCaseDateSyntax.Contains(option.ToLower()));
 
                 // Verify valid decimals.
-                var decimalsTag = p.Display?.Decimals;
+                var decimalsTag = param.Display?.Decimals;
                 if (foundDateTime && decimalsTag?.Value != 8)
                 {
-                    results.Add(Error.InvalidTagForDateTime(this, p, decimalsTag, "Protocol.Params.Param.Display.", "8", "datetime parameter", p.Id.RawValue));
+                    results.Add(Error.InvalidTagForDateTime(this, param, decimalsTag, param.Id.RawValue));
                 }
             }
 
@@ -261,13 +273,13 @@ Otherwise you can see rounding issues when retrieving the parmater from an exter
         }
 ```
 
-## Step 6: Verify your code
+## Step 7: Verify your code
 
  1. Run your new tests. Check if they are green.
 
  2. Run the entire test battery, to check for any regression. (this can take several minutes)
 
-## Step 6: Create a pull request
+## Step 8: Create a pull request
 
 In order to share your changes with the original owner, you now need to create a pull request.
 
