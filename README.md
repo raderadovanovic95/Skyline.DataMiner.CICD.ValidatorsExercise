@@ -3,7 +3,7 @@
 ## About
 
 > **Warning**
-> This is a test repository to play around with and perform the ValidatorsExercise1 with. For the real Validator and real contributions please use: https://github.com/SkylineCommunications/Skyline.DataMiner.CICD.Validators
+> This is a test repository to play around with and perform the Validators Exercise with. For the real Validator and real contributions please use: https://github.com/SkylineCommunications/Skyline.DataMiner.CICD.Validators
 
 In this tutorial, you will explore collaborative software development and DevOps with a focus on adding new checks to the Validator as used within DIS (DataMiner Integration Studio) and CI/CD. You will learn how to navigate the Validator source code, add a new check and create a Pull Request. With a hands-on exercise using a fake Validator source code, you will get to utilize GitHub to create a fork, a clone, and a pull request with your changes so that you are ready to perform the real thing!
 
