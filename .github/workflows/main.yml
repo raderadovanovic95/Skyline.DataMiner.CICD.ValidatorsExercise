@@ -23,6 +23,6 @@ jobs:
             This is an automatic e-mail indicating devops exercise results for ${{ github.repository }}. Results can be found on GitHub. Sent by user ${{ github.event.pull_request.user.login }}.
 
       - name: Close Pull
-          gh pr close ${{ github.event.number }} --comment "Auto-closing pull request. Results were forwarded to Skyline." --delete-branch
+        run: gh pr close ${{ github.event.number }} --comment "Auto-closing pull request. Results were forwarded to Skyline." --delete-branch
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
